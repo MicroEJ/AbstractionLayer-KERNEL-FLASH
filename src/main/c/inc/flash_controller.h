@@ -9,7 +9,7 @@
  * @file
  * @brief Flash controller layer used in the LLKERNEL flash implementation.
  * @author MicroEJ Developer Team
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/

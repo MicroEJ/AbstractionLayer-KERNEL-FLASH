@@ -10,7 +10,7 @@
  * @file
  * @brief LLKERNEL Flash implementation over an external Flash memory.
  * @author MicroEJ Developer Team
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 // -----------------------------------------------------------------------------
@@ -18,11 +18,11 @@
 // -----------------------------------------------------------------------------
 
 #include <string.h>
+#include <stdbool.h>
 
 #include "LLKERNEL_impl.h"
 #include "LLKERNEL_flash.h"
 #include "flash_controller.h"
-#include "microej.h"
 
 // -----------------------------------------------------------------------------
 // Macros and defines
@@ -88,10 +88,15 @@ uint32_t llkernel_get_kf_area_size(void) {
 static uint32_t llkernel_get_feature_slot_size_rom_bytes(void) {
 	uint32_t nb_subsector_kf_area;
 	uint32_t nb_subsector_per_slot;
-	// Divisions done first to avoid an overflow.
-	nb_subsector_kf_area = llkernel_get_kf_area_size() / LLKERNEL_FLASH_SUBSECTOR_SIZE;
-	nb_subsector_per_slot = nb_subsector_kf_area / kernel_max_nb_dynamic_features;
-	return nb_subsector_per_slot * LLKERNEL_FLASH_SUBSECTOR_SIZE;
+	uint32_t result = 0;
+
+	if (0u != kernel_max_nb_dynamic_features) {
+		// Divisions done first to avoid an overflow.
+		nb_subsector_kf_area = llkernel_get_kf_area_size() / LLKERNEL_FLASH_SUBSECTOR_SIZE;
+		nb_subsector_per_slot = nb_subsector_kf_area / kernel_max_nb_dynamic_features;
+		result = nb_subsector_per_slot * LLKERNEL_FLASH_SUBSECTOR_SIZE;
+	}
+	return result;
 }
 
 /**
@@ -127,9 +132,12 @@ static int llkernel_feature_is_in_last_kf_slot(feature_header_t *feature_ptr) {
  */
 static feature_header_t * llkernel_get_next_feature(feature_header_t *feature_ptr) {
 	feature_header_t *retval = NULL;
+	uint32_t feature_slot_size_bytes = llkernel_get_feature_slot_size_rom_bytes();
 
-	if (!llkernel_feature_is_in_last_kf_slot(feature_ptr)) {
-		retval = (feature_header_t *)(((uint32_t)feature_ptr) + llkernel_get_feature_slot_size_rom_bytes());
+	if (0u != feature_slot_size_bytes) {
+		if (!llkernel_feature_is_in_last_kf_slot(feature_ptr)) {
+			retval = (feature_header_t *)(((uint32_t)feature_ptr) + feature_slot_size_bytes);
+		}
 	}
 	return retval;
 }
@@ -267,21 +275,21 @@ int32_t LLKERNEL_IMPL_getFeatureHandle(int32_t allocation_index) {
 
 	// Only if allocation_index in nb_features range
 	if ((nb_features + 1u) >= (uint32_t)allocation_index) {
-		uint8_t is_leaving_loop = MICROEJ_FALSE;
+		uint8_t is_leaving_loop = false;
 		do {
 			if ((LLKERNEL_FEATURE_USED_MAGIC_NUMBER != feature_ptr->status)
 			    && (LLKERNEL_FEATURE_REMOVED_MAGIC_NUMBER != feature_ptr->status)) {
 				// Reach end of installed features
-				is_leaving_loop = MICROEJ_TRUE;
+				is_leaving_loop = true;
 			}
 
 			if ((LLKERNEL_FEATURE_USED_MAGIC_NUMBER == feature_ptr->status) &&
 			    (feature_ptr->feature_index == (uint32_t)allocation_index)) {
 				result = (int32_t)feature_ptr;
-				is_leaving_loop = MICROEJ_TRUE;
+				is_leaving_loop = true;
 			}
 
-			if (MICROEJ_TRUE == is_leaving_loop) {
+			if (true == is_leaving_loop) {
 				break; // Leaves the loop to return the current feature_ptr.
 			}
 			feature_ptr = llkernel_get_next_feature(feature_ptr);
@@ -541,6 +549,20 @@ int32_t LLKERNEL_IMPL_copyToROM(void *dest_address_ROM, void *src_address, int32
 			LLKERNEL_ERROR_LOG("%s: feature size larger than maximum allowed size (%d bytes)\n", __func__, size);
 			result = LLKERNEL_ERROR;
 		}
+
+		uint32_t feature_slot_size = llkernel_get_feature_slot_size_rom_bytes();
+		if (0u != feature_slot_size) {
+			uint32_t index_feature_slot_src_addr = ((uint32_t)dest_ptr - flash_ctrl_get_kf_start_address()) /
+			                                       feature_slot_size;
+			uint32_t index_feature_slot_end_addr = (((uint32_t)dest_ptr + (uint32_t)size -
+			                                         flash_ctrl_get_kf_start_address())) / feature_slot_size;
+			if (index_feature_slot_src_addr != index_feature_slot_end_addr) {
+				LLKERNEL_ERROR_LOG(
+					"%s: The ROM copy overlaps another feature slot (start addr: 0x%x ; end addr: 0x%x) \n", __func__,
+					(uint32_t)dest_ptr, ((uint32_t)dest_ptr + (uint32_t)size));
+				result = LLKERNEL_ERROR;
+			}
+		}
 	}
 
 	if (LLKERNEL_OK == result) {
@@ -559,8 +581,9 @@ int32_t LLKERNEL_IMPL_copyToROM(void *dest_address_ROM, void *src_address, int32
 				if (FLASH_CTRL_OK != flash_ctrl_enable_memory_mapped_mode()) {
 					LLKERNEL_ERROR_LOG("%s: Could not enable the memory mapped mode \n", __func__);
 				}
-				// cppcheck-suppress [misra-c2012-11.6] page_address is an address
-				UNUSED_RETURN(memcpy((void *)mem_writeBuffer, (const void *)page_address, flash_ctrl_get_page_size()));
+				uint32_t *ptr_page_address = (uint32_t *)page_address;
+				UNUSED_RETURN(memcpy((void *)mem_writeBuffer, (const void *)ptr_page_address,
+				                     flash_ctrl_get_page_size()));
 				UNUSED_RETURN(flash_ctrl_disable_memory_mapped_mode());
 			}
 

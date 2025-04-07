@@ -1,7 +1,7 @@
 <!--
 	Markdown
 -->
-![SDK](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_6.0.json)
+
 ![ARCH](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/arch_8.3.json)
 
 # Abstraction Layer Kernel Flash
@@ -42,13 +42,15 @@ N/A
 
 # Validation
 
+This Abstraction Layer implementation can be validated in the target Board Support Package using the `llkernel` tests of the [AbstractionLayer-Tests](https://github.com/MicroEJ/AbstractionLayer-Tests/tree/master/tests/llkernel) project.
+
 Here is a non exhaustive list of tested environments:
 
 - Hardware
   - e.g. STM32U5G9J-DK2
 - Compilers / Integrated Development Environments:
   - e.g. IAR Embedded Workbench 9.50.1
-- Passed the llkernel C tests version 1.0.0
+- Passed the [llkernel C tests](https://github.com/MicroEJ/AbstractionLayer-Tests/tree/master/tests/llkernel) version 1.2.0
 
 # MISRA Compliance
 
@@ -66,7 +68,6 @@ It has been verified with Cppcheck v2.13. Here is the list of deviations from MI
 |  Rule 11.3 |  Required | Cast used by many C framework to factorize code.                                                                |
 |  Rule 11.4 |  Advisory | Used when coding BSP C source code (drivers, etc.)                                                              |
 |  Rule 11.5 |  Advisory | Used for code genericity/abstraction.                                                                           |
-|  Rule 11.6 |  Required | page_address is an address.                                                                                     |
 |  Rule 17.7 |  Required | Unused non-void returned type, the use of returned values of debug traces is not necessary.                     |
 |  Rule 18.4 |  Advisory | Points after the + operation.                                                                                   |
 |  Rule 21.6 |  Required | Used for printf usage.                                                                                          |
@@ -75,7 +76,6 @@ It has been verified with Cppcheck v2.13. Here is the list of deviations from MI
 # Dependencies
 
 - MicroEJ Architecture 8.1 or higher.
-- C module com.is2t.bsp.util.microej-util-1.3.0 (for microej.h)
 
 # Source
 
