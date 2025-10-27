@@ -9,7 +9,7 @@
  * @file
  * @brief LLKERNEL Flash common defines/functions/structs.
  * @author MicroEJ Developer Team
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/

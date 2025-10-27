@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [1.0.2] - 2025-10-27
+
+### Changed
+
+- Optimize `LLKERNEL_IMPL_freeFeature` to only remove the subsector with the `feature_header` information.
+
+### Fixed
+
+- Fix LLKERNEL app reinstallation.
+- Fix Kernel Flash Error 54 after an App Uninstall.
+- Fix `LLKERNEL_IMPL_copyToROM` when data buffered from the previous call are needed.
+- Fix `kernel_ram_buffer` alignment to match `LLKERNEL_RAM_ALIGN_SIZE`.
+- Fix condition in `LLKERNEL_IMPL_getFeatureHandle`.
+- Fix the call of `page_write` with a size greater than the page size.
+
+
 ## [1.0.1] - 2025-03-31
 
 ### Fixed

@@ -63,14 +63,13 @@ It has been verified with Cppcheck v2.13. Here is the list of deviations from MI
 |  Rule 5.5  |  Required | Macro with same name generated in intern/LLKERNEL_impl.h.                                                       |
 |  Rule 8.4  |  Required | A compatible declaration is defined in headers provided by the VEE Port.                                        |
 |  Rule 8.7  |  Advisory | API function that can be used in another file.                                                                  |
-|  Rule 8.9  |  Advisory | Buffer located in the section .bss.kf.heap must be global.                                                      |
 |  Rule 10.3 |  Required | False positive, this is a 8 bits pointer that stores a 32 bits address.                                         |
 |  Rule 11.3 |  Required | Cast used by many C framework to factorize code.                                                                |
 |  Rule 11.4 |  Advisory | Used when coding BSP C source code (drivers, etc.)                                                              |
 |  Rule 11.5 |  Advisory | Used for code genericity/abstraction.                                                                           |
 |  Rule 17.7 |  Required | Unused non-void returned type, the use of returned values of debug traces is not necessary.                     |
 |  Rule 18.4 |  Advisory | Points after the + operation.                                                                                   |
-|  Rule 21.6 |  Required | Used for printf usage.                                                                                          |
+|  Rule 21.6 |  Required | Used for debug log usage.                                                                                       |
 
 
 # Dependencies

@@ -9,7 +9,7 @@
  * @file
  * @brief Flash controller layer used in the LLKERNEL flash implementation.
  * @author MicroEJ Developer Team
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -68,6 +68,8 @@ uint32_t flash_ctrl_startup(void);
  * @param  size Size of the data to be written
  *
  * @retval FLASH_CTRL_OK on success, FLASH_CTRL_ERROR if an error occurs.
+ *
+ * @note If a cache is enabled, invalidate the cache of the memory area updated before the return statement.
  */
 uint32_t flash_ctrl_page_write(uint8_t *pData, uint32_t addr, uint32_t size);
 
@@ -76,6 +78,8 @@ uint32_t flash_ctrl_page_write(uint8_t *pData, uint32_t addr, uint32_t size);
  * @param  addr Subsector address to erase, offset in MCU memory
  *
  * @retval FLASH_CTRL_OK on success, FLASH_CTRL_ERROR if an error occurs.
+ *
+ * @attention If a cache is enabled, invalidate the cache of the memory area updated before the return statement.
  */
 uint32_t flash_ctrl_erase_subsector(uint32_t addr);
 

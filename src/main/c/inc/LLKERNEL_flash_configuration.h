@@ -9,7 +9,7 @@
  * @file
  * @brief LLKERNEL flash implementation configuration.
  * @author MicroEJ Developer Team
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -24,17 +24,15 @@ extern "C" {
 // Includes
 // ----------------------------------------------------------------------------
 
-#if !defined(__CC_ARM)
-// cppcheck-suppress [misra-c2012-20.9]: The macro '__has_include' is defined by the toolchain.
-   #if __has_include("veeport_configuration.h")
-	  #include "veeport_configuration.h"
-   #else
-	  #warning "'veeport_configuration.h' not found, default configuration used for all parameters."
-   #endif // __has_include("veeport_configuration.h")
+// Include VEE Port User configuration file
+#if defined __has_include
+	#if __has_include("veeport_configuration.h")
+		#include "veeport_configuration.h"
+	#endif // __has_include("veeport_configuration.h")
 #else
-   #warning "This C module needs a 'veeport_configuration.h' in your ARMCC project. "
-   #include "veeport_configuration.h"
-#endif // !defined ( __CC_ARM)
+// Ensure 'veeport_configuration.h' exists in your project for custom configurations.
+	#include "veeport_configuration.h"
+#endif // defined __has_include
 
 // ----------------------------------------------------------------------------
 // Macros and defines
