@@ -10,7 +10,7 @@
  * @file
  * @brief LLKERNEL Flash implementation over an external Flash memory.
  * @author MicroEJ Developer Team
- * @version 1.0.2
+ * @version 1.0.3
  */
 
 // -----------------------------------------------------------------------------
@@ -685,7 +685,7 @@ int32_t LLKERNEL_IMPL_copyToROM(void *dest_address_ROM, void *src_address, int32
 
 			if ((copy_size + buffer_offset) == flash_ctrl_get_page_size()) {
 				LLKERNEL_DEBUG_LOG("%s: page write (addr: 0x%.8x, off: 0x%.8x, len: 0x%.8x)\n", __func__,
-				                   (int)page_address, (int)buffer_offset, (int)(buffer_offset + copy_size);
+				                   page_address, buffer_offset, (buffer_offset + copy_size));
 				if (FLASH_CTRL_OK != flash_ctrl_page_write((uint8_t *)mem_writeBuffer, page_address,
 				                                           flash_ctrl_get_page_size())) {
 					LLKERNEL_ERROR_LOG("%s: flash write 0x%.8x failed\n", __func__, (int)page_address);

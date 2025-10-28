@@ -9,7 +9,7 @@
  * @file
  * @brief LLKERNEL flash implementation configuration.
  * @author MicroEJ Developer Team
- * @version 1.0.2
+ * @version 1.0.3
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
